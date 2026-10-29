@@ -1,0 +1,83 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold mb-1">Categorias</h1>
+      <p class="text-secondary mb-0">Organize suas notas por categorias.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-warning rounded-pill px-4"
+      (click)="exibirFormulario.set(!exibirFormulario())"
+    >
+      Nova categoria
+    </button>
+  </div>
+
+  @if (exibirFormulario()) {
+    <div class="card border-0 shadow-sm p-4 mb-4">
+      <h2 class="fs-5 mb-3">Cadastrar categoria</h2>
+
+      <form (submit)="$event.preventDefault(); cadastrarCategoria()">
+        <div class="mb-3">
+          <label for="titulo" class="form-label fw-semibold"> Título </label>
+
+          <input
+            id="titulo"
+            type="text"
+            class="form-control"
+            placeholder="Ex.: Trabalho, Estudos, Pessoal"
+            minlength="2"
+            maxlength="100"
+            [value]="tituloNovaCategoria()"
+            (input)="tituloNovaCategoria.set($any($event.target).value)"
+            required
+          />
+        </div>
+
+        @if (erroCadastro()) {
+          <div class="alert alert-danger">
+            {{ erroCadastro() }}
+          </div>
+        }
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-warning rounded-pill px-4" [disabled]="salvando()">
+            {{ salvando() ? 'Salvando...' : 'Salvar categoria' }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary rounded-pill px-4"
+            (click)="exibirFormulario.set(false)"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (carregando()) {
+    <p class="text-secondary">Carregando categorias...</p>
+  } @else if (erro()) {
+    <div class="alert alert-danger">
+      {{ erro() }}
+    </div>
+  } @else if (categorias().length === 0) {
+    <div class="card border-0 shadow-sm p-5 text-center">
+      <h2 class="fs-5">Nenhuma categoria cadastrada</h2>
+      <p class="text-secondary mb-0">Crie sua primeira categoria para organizar suas notas.</p>
+    </div>
+  } @else {
+    <div class="card border-0 shadow-sm">
+      <ul class="list-group list-group-flush">
+        @for (categoria of categorias(); track categoria.id) {
+          <li class="list-group-item py-3">
+            {{ categoria.titulo }}
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>
