@@ -18,10 +18,15 @@ export class Listagem implements OnInit {
   erro = signal('');
 
   exibirFormulario = signal(false);
+  notaEmEdicao = signal<Nota | null>(null);
+
   titulo = signal('');
   descricao = signal('');
   categoriasSelecionadas = signal<string[]>([]);
+
   salvando = signal(false);
+  excluindoId = signal<string | null>(null);
+  alterandoStatusId = signal<string | null>(null);
   erroCadastro = signal('');
 
   ngOnInit(): void {
@@ -56,21 +61,42 @@ export class Listagem implements OnInit {
 
   alternarCategoria(id: string, selecionada: boolean): void {
     this.categoriasSelecionadas.update((ids) =>
-      selecionada ? [...ids, id] : ids.filter((item) => item !== id)
+      selecionada
+        ? [...new Set([...ids, id])]
+        : ids.filter((item) => item !== id)
     );
+  }
+
+  iniciarCadastro(): void {
+    this.cancelarFormulario();
+    this.exibirFormulario.set(true);
+  }
+
+  iniciarEdicao(nota: Nota): void {
+    this.notaEmEdicao.set(nota);
+    this.titulo.set(nota.titulo);
+    this.descricao.set(nota.descricao ?? '');
+    this.categoriasSelecionadas.set(
+      (nota.categorias ?? []).map((categoria) => categoria.id)
+    );
+    this.erroCadastro.set('');
+    this.exibirFormulario.set(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   cancelarFormulario(): void {
     this.exibirFormulario.set(false);
+    this.notaEmEdicao.set(null);
     this.titulo.set('');
     this.descricao.set('');
     this.categoriasSelecionadas.set([]);
     this.erroCadastro.set('');
   }
 
-  cadastrarNota(): void {
+  salvarNota(): void {
     const titulo = this.titulo().trim();
     const descricao = this.descricao().trim();
+    const nota = this.notaEmEdicao();
 
     if (titulo.length < 2 || titulo.length > 100) {
       this.erroCadastro.set('O título deve ter entre 2 e 100 caracteres.');
@@ -85,20 +111,77 @@ export class Listagem implements OnInit {
     this.salvando.set(true);
     this.erroCadastro.set('');
 
-    this.notasService
-      .cadastrar(titulo, descricao, this.categoriasSelecionadas())
-      .subscribe({
-        next: () => {
-          this.salvando.set(false);
-          this.cancelarFormulario();
-          this.carregarNotas();
-        },
-        error: () => {
-          this.erroCadastro.set(
-            'Não foi possível cadastrar a nota. Verifique se o título já existe.'
-          );
-          this.salvando.set(false);
-        },
-      });
+    const requisicao = nota
+      ? this.notasService.editar(
+          nota.id,
+          titulo,
+          descricao,
+          nota.status,
+          this.categoriasSelecionadas()
+        )
+      : this.notasService.cadastrar(
+          titulo,
+          descricao,
+          this.categoriasSelecionadas()
+        );
+
+    requisicao.subscribe({
+      next: () => {
+        this.salvando.set(false);
+        this.cancelarFormulario();
+        this.carregarNotas();
+      },
+      error: () => {
+        this.erroCadastro.set(
+          'Não foi possível salvar a nota. Verifique se o título já existe.'
+        );
+        this.salvando.set(false);
+      },
+    });
+  }
+
+  alternarStatus(nota: Nota): void {
+    const novoStatus =
+      nota.status === 'Ativa' ? 'Arquivada' : 'Ativa';
+
+    this.alterandoStatusId.set(nota.id);
+    this.erro.set('');
+
+    this.notasService.editar(
+      nota.id,
+      nota.titulo,
+      nota.descricao ?? '',
+      novoStatus,
+      (nota.categorias ?? []).map((categoria) => categoria.id)
+    ).subscribe({
+      next: () => {
+        this.alterandoStatusId.set(null);
+        this.carregarNotas();
+      },
+      error: () => {
+        this.alterandoStatusId.set(null);
+        this.erro.set('Não foi possível alterar o status da nota.');
+      },
+    });
+  }
+
+  excluirNota(nota: Nota): void {
+    if (!confirm(`Deseja realmente excluir a nota "${nota.titulo}"?`)) {
+      return;
+    }
+
+    this.excluindoId.set(nota.id);
+    this.erro.set('');
+
+    this.notasService.excluir(nota.id).subscribe({
+      next: () => {
+        this.excluindoId.set(null);
+        this.carregarNotas();
+      },
+      error: () => {
+        this.excluindoId.set(null);
+        this.erro.set('Não foi possível excluir a nota.');
+      },
+    });
   }
 }

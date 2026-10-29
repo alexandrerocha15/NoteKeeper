@@ -50,4 +50,39 @@ export class Notas {
       { headers },
     );
   }
+
+  editar(
+    id: string,
+    titulo: string,
+    descricao: string,
+    status: string,
+    categoriaIds: string[],
+  ): Observable<Nota> {
+    const token = this.auth.obterToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token ?? ''}`,
+    });
+
+    return this.http.put<Nota>(
+      `${this.apiUrl}/${id}`,
+      {
+        titulo,
+        descricao,
+        status,
+        categoriaIds,
+      },
+      { headers },
+    );
+  }
+
+  excluir(id: string): Observable<void> {
+    const token = this.auth.obterToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token ?? ''}`,
+    });
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
 }

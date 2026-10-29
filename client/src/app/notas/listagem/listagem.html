@@ -2,25 +2,33 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="fw-bold mb-1">Minhas notas</h1>
-      <p class="text-secondary mb-0">Organize e gerencie suas anotações.</p>
+      <p class="text-secondary mb-0">
+        Organize e gerencie suas anotações.
+      </p>
     </div>
 
     <button
       type="button"
       class="btn btn-warning rounded-pill px-4"
-      (click)="exibirFormulario.set(true)"
+      (click)="iniciarCadastro()"
     >
       Nova nota
     </button>
   </div>
 
+  <!-- Formulário de cadastro e edição -->
   @if (exibirFormulario()) {
     <div class="card border-0 shadow-sm p-4 mb-4">
-      <h2 class="fs-5 mb-3">Cadastrar nota</h2>
+      <h2 class="fs-5 mb-3">
+        {{ notaEmEdicao() ? 'Editar nota' : 'Cadastrar nota' }}
+      </h2>
 
-      <form (submit)="$event.preventDefault(); cadastrarNota()">
+      <form (submit)="$event.preventDefault(); salvarNota()">
         <div class="mb-3">
-          <label for="titulo" class="form-label fw-semibold">Título</label>
+          <label for="titulo" class="form-label fw-semibold">
+            Título
+          </label>
+
           <input
             id="titulo"
             type="text"
@@ -35,7 +43,10 @@
         </div>
 
         <div class="mb-3">
-          <label for="descricao" class="form-label fw-semibold"> Descrição </label>
+          <label for="descricao" class="form-label fw-semibold">
+            Descrição
+          </label>
+
           <textarea
             id="descricao"
             class="form-control"
@@ -52,7 +63,7 @@
 
           @if (categorias().length === 0) {
             <p class="text-secondary small">
-              Nenhuma categoria disponível. Você pode cadastrar a nota sem categoria.
+              Nenhuma categoria disponível. Você pode salvar a nota sem categoria.
             </p>
           } @else {
             <div class="d-flex flex-wrap gap-3">
@@ -64,7 +75,9 @@
                     [checked]="categoriasSelecionadas().includes(categoria.id)"
                     (change)="alternarCategoria(categoria.id, $any($event.target).checked)"
                   />
-                  <span class="form-check-label">{{ categoria.titulo }}</span>
+                  <span class="form-check-label">
+                    {{ categoria.titulo }}
+                  </span>
                 </label>
               }
             </div>
@@ -72,12 +85,24 @@
         </div>
 
         @if (erroCadastro()) {
-          <div class="alert alert-danger">{{ erroCadastro() }}</div>
+          <div class="alert alert-danger">
+            {{ erroCadastro() }}
+          </div>
         }
 
         <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-warning rounded-pill px-4" [disabled]="salvando()">
-            {{ salvando() ? 'Salvando...' : 'Salvar nota' }}
+          <button
+            type="submit"
+            class="btn btn-warning rounded-pill px-4"
+            [disabled]="salvando()"
+          >
+            {{
+              salvando()
+                ? 'Salvando...'
+                : notaEmEdicao()
+                  ? 'Salvar alterações'
+                  : 'Salvar nota'
+            }}
           </button>
 
           <button
@@ -92,42 +117,87 @@
     </div>
   }
 
+  <!-- Listagem -->
   @if (carregando()) {
     <p class="text-secondary">Carregando notas...</p>
   } @else if (erro()) {
-    <div class="alert alert-danger">{{ erro() }}</div>
+    <div class="alert alert-danger">
+      {{ erro() }}
+    </div>
   } @else if (notas().length === 0) {
     <div class="card border-0 shadow-sm p-5 text-center">
       <h2 class="fs-5">Nenhuma nota cadastrada</h2>
-      <p class="text-secondary mb-0">Crie sua primeira nota para começar a se organizar.</p>
+      <p class="text-secondary mb-0">
+        Crie sua primeira nota para começar a se organizar.
+      </p>
     </div>
   } @else {
     <div class="row g-3">
       @for (nota of notas(); track nota.id) {
         <div class="col-md-6 col-lg-4">
           <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title fs-5">{{ nota.titulo }}</h2>
+            <div class="card-body d-flex flex-column">
+
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h2 class="card-title fs-5 mb-0">
+                  {{ nota.titulo }}
+                </h2>
+
+                <span
+                  class="badge"
+                  [class.text-bg-success]="nota.status === 'Ativa'"
+                  [class.text-bg-secondary]="nota.status !== 'Ativa'"
+                >
+                  {{ nota.status }}
+                </span>
+              </div>
 
               <p class="card-text text-secondary">
                 {{ nota.descricao || 'Sem descrição' }}
               </p>
 
-              <span
-                class="badge"
-                [class.text-bg-success]="nota.status === 'Ativa'"
-                [class.text-bg-secondary]="nota.status !== 'Ativa'"
-              >
-                {{ nota.status }}
-              </span>
-
-              <div class="mt-3 d-flex flex-wrap gap-2">
+              <div class="d-flex flex-wrap gap-2 mb-3">
                 @for (categoria of nota.categorias || []; track categoria.id) {
                   <span class="badge text-bg-light border">
                     {{ categoria.titulo }}
                   </span>
                 }
               </div>
+
+              <div class="d-flex flex-wrap gap-2 mt-auto pt-3 border-top">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                  (click)="iniciarEdicao(nota)"
+                >
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                  [disabled]="alterandoStatusId() === nota.id"
+                  (click)="alternarStatus(nota)"
+                >
+                  {{
+                    alterandoStatusId() === nota.id
+                      ? 'Salvando...'
+                      : nota.status === 'Ativa'
+                        ? 'Arquivar'
+                        : 'Reativar'
+                  }}
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                  [disabled]="excluindoId() === nota.id"
+                  (click)="excluirNota(nota)"
+                >
+                  {{ excluindoId() === nota.id ? 'Excluindo...' : 'Excluir' }}
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
