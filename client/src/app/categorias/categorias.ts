@@ -35,5 +35,24 @@ export class Categorias {
 
     return this.http.post<Categoria>(this.apiUrl, { titulo }, { headers });
   }
-  
+
+  editar(id: string, titulo: string): Observable<Categoria> {
+    const token = this.auth.obterToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token ?? ''}`,
+    });
+
+    return this.http.put<Categoria>(`${this.apiUrl}/${id}`, { titulo }, { headers });
+  }
+
+  excluir(id: string): Observable<void> {
+    const token = this.auth.obterToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token ?? ''}`,
+    });
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
 }

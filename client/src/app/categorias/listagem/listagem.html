@@ -1,26 +1,37 @@
 <div class="container py-4">
+
+  <!-- Cabeçalho -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="fw-bold mb-1">Categorias</h1>
-      <p class="text-secondary mb-0">Organize suas notas por categorias.</p>
+      <p class="text-secondary mb-0">
+        Organize suas notas por categorias.
+      </p>
     </div>
 
     <button
       type="button"
       class="btn btn-warning rounded-pill px-4"
-      (click)="exibirFormulario.set(!exibirFormulario())"
+      (click)="cancelarFormulario(); exibirFormulario.set(true)"
     >
       Nova categoria
     </button>
   </div>
 
+  <!-- Formulário de cadastro e edição -->
   @if (exibirFormulario()) {
     <div class="card border-0 shadow-sm p-4 mb-4">
-      <h2 class="fs-5 mb-3">Cadastrar categoria</h2>
 
-      <form (submit)="$event.preventDefault(); cadastrarCategoria()">
+      <h2 class="fs-5 mb-3">
+        {{ categoriaEmEdicao() ? 'Editar categoria' : 'Cadastrar categoria' }}
+      </h2>
+
+      <form (submit)="$event.preventDefault(); salvarCategoria()">
+
         <div class="mb-3">
-          <label for="titulo" class="form-label fw-semibold"> Título </label>
+          <label for="titulo" class="form-label fw-semibold">
+            Título
+          </label>
 
           <input
             id="titulo"
@@ -42,42 +53,99 @@
         }
 
         <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-warning rounded-pill px-4" [disabled]="salvando()">
-            {{ salvando() ? 'Salvando...' : 'Salvar categoria' }}
+          <button
+            type="submit"
+            class="btn btn-warning rounded-pill px-4"
+            [disabled]="salvando()"
+          >
+            {{
+              salvando()
+                ? 'Salvando...'
+                : categoriaEmEdicao()
+                  ? 'Salvar alterações'
+                  : 'Salvar categoria'
+            }}
           </button>
 
           <button
             type="button"
             class="btn btn-outline-secondary rounded-pill px-4"
-            (click)="exibirFormulario.set(false)"
+            (click)="cancelarFormulario()"
           >
             Cancelar
           </button>
         </div>
+
       </form>
     </div>
   }
 
+  <!-- Carregamento -->
   @if (carregando()) {
-    <p class="text-secondary">Carregando categorias...</p>
-  } @else if (erro()) {
+    <p class="text-secondary">
+      Carregando categorias...
+    </p>
+  }
+
+  <!-- Erro ao carregar -->
+  @else if (erro()) {
     <div class="alert alert-danger">
       {{ erro() }}
     </div>
-  } @else if (categorias().length === 0) {
+  }
+
+  <!-- Lista vazia -->
+  @else if (categorias().length === 0) {
     <div class="card border-0 shadow-sm p-5 text-center">
       <h2 class="fs-5">Nenhuma categoria cadastrada</h2>
-      <p class="text-secondary mb-0">Crie sua primeira categoria para organizar suas notas.</p>
+      <p class="text-secondary mb-0">
+        Crie sua primeira categoria para organizar suas notas.
+      </p>
     </div>
-  } @else {
+  }
+
+  <!-- Categorias cadastradas -->
+  @else {
     <div class="card border-0 shadow-sm">
       <ul class="list-group list-group-flush">
+
         @for (categoria of categorias(); track categoria.id) {
-          <li class="list-group-item py-3">
-            {{ categoria.titulo }}
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center py-3 px-4"
+          >
+            <span class="fw-medium">
+              {{ categoria.titulo }}
+            </span>
+
+            <div class="d-flex gap-2">
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                (click)="iniciarEdicao(categoria)"
+              >
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                [disabled]="excluindoId() === categoria.id"
+                (click)="excluirCategoria(categoria)"
+              >
+                {{
+                  excluindoId() === categoria.id
+                    ? 'Excluindo...'
+                    : 'Excluir'
+                }}
+              </button>
+
+            </div>
           </li>
         }
+
       </ul>
     </div>
   }
+
 </div>
