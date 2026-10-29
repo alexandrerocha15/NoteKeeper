@@ -1,0 +1,47 @@
+<main class="login-container">
+  <section class="login-card">
+    <h1>NoteKeeper</h1>
+    <p>Entre na sua conta para acessar suas notas.</p>
+
+    <form (ngSubmit)="entrar()">
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="seu@email.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          type="password"
+          name="senha"
+          [(ngModel)]="senha"
+          placeholder="Sua senha"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      @if (erro()) {
+        <p class="mensagem-erro">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="carregando()">
+        {{ carregando() ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <p class="cadastro">
+      Ainda não possui conta?
+      <a routerLink="/cadastro">Cadastre-se</a>
+    </p>
+  </section>
+</main>
