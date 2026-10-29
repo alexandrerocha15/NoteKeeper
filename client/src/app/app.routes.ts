@@ -13,11 +13,23 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
+    loadComponent: () =>
+      import('./layout/principal/principal').then((m) => m.Principal),
+    children: [
+      {
+        path: '',
+        redirectTo: 'notas',
+        pathMatch: 'full',
+      },
+      {
+        path: 'notas',
+        loadComponent: () =>
+          import('./notas/listagem/listagem').then((m) => m.Listagem),
+      },
+    ],
   },
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'notas',
   },
 ];

@@ -1,67 +1,129 @@
-<main>
-  <h1>Criar conta no NoteKeeper</h1>
-  <p>Cadastre-se para começar a organizar suas notas.</p>
 
-  <form (ngSubmit)="cadastrar()">
-    <div>
-      <label for="nome">Nome</label>
-      <input
-        id="nome"
-        type="text"
-        name="nome"
-        [(ngModel)]="nome"
-        placeholder="Seu nome"
-        required
-      />
-    </div>
+<main class="container-fluid p-0">
+  <div class="row g-0 min-vh-100">
 
-    <div>
-      <label for="email">E-mail</label>
-      <input
-        id="email"
-        type="email"
-        name="email"
-        [(ngModel)]="email"
-        placeholder="seu@email.com"
-        required
-      />
-    </div>
+    <section class="col-lg-6 painel-apresentacao d-flex flex-column justify-content-between p-5">
+      <div class="marca d-flex align-items-center gap-3">
+        <span class="marca-icone">N</span>
+        <span class="fs-4 fw-bold">NoteKeeper</span>
+      </div>
 
-    <div>
-      <label for="senha">Senha</label>
-      <input
-        id="senha"
-        type="password"
-        name="senha"
-        [(ngModel)]="senha"
-        placeholder="Crie uma senha"
-        required
-      />
-    </div>
+      <div class="apresentacao">
+        <span class="etiqueta">COMECE A SE ORGANIZAR</span>
 
-    <div>
-      <label for="confirmarSenha">Confirmar senha</label>
-      <input
-        id="confirmarSenha"
-        type="password"
-        name="confirmarSenha"
-        [(ngModel)]="confirmarSenha"
-        placeholder="Repita sua senha"
-        required
-      />
-    </div>
+        <h1 class="fw-bold mt-3 mb-4">
+          Suas ideias merecem<br>
+          um lugar especial.
+        </h1>
 
-    @if (erro()) {
-      <p>{{ erro() }}</p>
-    }
+        <p>
+          Transforme suas anotações em uma rotina mais organizada.
+          Crie categorias e mantenha tudo ao seu alcance.
+        </p>
 
-    <button type="submit" [disabled]="carregando()">
-      {{ carregando() ? 'Cadastrando...' : 'Criar conta' }}
-    </button>
-  </form>
+        <div class="nota-ilustrativa mt-5">
+          <span class="nota-categoria">Organização</span>
+          <h3 class="fs-5 mt-3">Sua primeira nota</h3>
+          <div class="linha"></div>
+          <div class="linha curta"></div>
+          <div class="linha media"></div>
+        </div>
+      </div>
 
-  <p>
-    Já possui uma conta?
-    <a routerLink="/login">Entrar</a>
-  </p>
+      <small class="rodape">NoteKeeper © 2026</small>
+    </section>
+
+    <section class="col-lg-6 painel-formulario d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="formulario-conteudo w-100">
+        <span class="etiqueta">CRIE SUA CONTA</span>
+
+        <h2 class="fw-bold mt-3">Comece agora</h2>
+        <p class="text-secondary mb-4">
+          Preencha seus dados para criar sua conta.
+        </p>
+
+        <form (ngSubmit)="cadastrar()">
+          <div class="mb-3">
+            <label for="nome" class="form-label fw-semibold">Nome</label>
+            <input
+              id="nome"
+              type="text"
+              name="nome"
+              class="form-control form-control-lg"
+              [(ngModel)]="nome"
+              placeholder="Seu nome"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">E-mail</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              class="form-control form-control-lg"
+              [(ngModel)]="email"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="senha" class="form-label fw-semibold">Senha</label>
+            <input
+              id="senha"
+              type="password"
+              name="senha"
+              class="form-control form-control-lg"
+              [(ngModel)]="senha"
+              placeholder="Mínimo 8 caracteres, número e símbolo"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="confirmarSenha" class="form-label fw-semibold">
+              Confirmar senha
+            </label>
+            <input
+              id="confirmarSenha"
+              type="password"
+              name="confirmarSenha"
+              class="form-control form-control-lg"
+              [(ngModel)]="confirmarSenha"
+              placeholder="Repita sua senha"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+
+          @if (erro()) {
+            <div class="alert alert-danger" role="alert">
+              {{ erro() }}
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn botao-entrar w-100 py-3 fw-bold"
+            [disabled]="carregando()"
+          >
+            {{ carregando() ? 'Cadastrando...' : 'Criar minha conta' }}
+          </button>
+        </form>
+
+        <p class="text-center text-secondary mt-4">
+          Já possui uma conta?
+          <a routerLink="/login" class="link-cadastro fw-bold">
+            Entrar
+          </a>
+        </p>
+      </div>
+    </section>
+
+  </div>
 </main>

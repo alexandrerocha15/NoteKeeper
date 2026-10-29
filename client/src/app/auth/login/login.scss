@@ -1,0 +1,138 @@
+.painel-apresentacao {
+  min-height: 100vh;
+  background-color: #111827;
+  color: #fff;
+}
+
+.marca-icone {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: #f59e0b;
+  color: #111827;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.apresentacao {
+  max-width: 530px;
+
+  h1 {
+    font-size: clamp(32px, 3.4vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+  }
+
+  p {
+    color: #aeb9ca;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+}
+
+.etiqueta {
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.nota-ilustrativa {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 350px;
+  padding: 30px;
+  background-color: #263244;
+  border: 1px solid #435067;
+  border-radius: 18px;
+  transform: rotate(-5deg);
+  box-shadow: 20px 20px 0 #1b2535;
+}
+
+.nota-categoria {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background-color: #4b3b23;
+  color: #fbbf24;
+  font-size: 12px;
+}
+
+.linha {
+  height: 9px;
+  border-radius: 8px;
+  background-color: #435067;
+
+  &.curta {
+    width: 55%;
+  }
+
+  &.media {
+    width: 75%;
+  }
+}
+
+.rodape {
+  color: #718096;
+}
+
+.painel-formulario {
+  background-color: #fff;
+}
+
+.formulario-conteudo {
+  max-width: 410px;
+
+  h2 {
+    font-size: 36px;
+    letter-spacing: -1px;
+  }
+}
+
+.form-control {
+  border-radius: 10px;
+  font-size: 15px;
+
+  &:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+  }
+}
+
+.botao-entrar {
+  background-color: #f59e0b;
+  color: #111827;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: #e9a008;
+  }
+}
+
+.link-cadastro {
+  color: #c78100;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 991px) {
+  .painel-apresentacao {
+    min-height: auto;
+    padding: 24px !important;
+  }
+
+  .apresentacao,
+  .rodape {
+    display: none;
+  }
+
+  .painel-formulario {
+    min-height: calc(100vh - 90px);
+  }
+}

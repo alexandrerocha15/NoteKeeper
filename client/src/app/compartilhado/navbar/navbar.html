@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand navbar-dark navbar-notekeeper">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand fw-bold" routerLink="/notas">
+      <span class="marca-icone">N</span>
+      NoteKeeper
+    </a>
+
+    <div class="d-flex align-items-center gap-4">
+      <a
+        class="nav-link"
+        routerLink="/notas"
+        routerLinkActive="ativo"
+      >
+        Minhas notas
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/categorias"
+        routerLinkActive="ativo"
+      >
+        Categorias
+      </a>
+
+      <button
+        type="button"
+        class="btn btn-outline-light btn-sm"
+        (click)="sair()"
+      >
+        Sair
+      </button>
+    </div>
+  </div>
+</nav>

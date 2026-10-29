@@ -7,6 +7,7 @@ import { Auth } from '../auth';
   selector: 'app-cadastro',
   imports: [FormsModule, RouterLink],
   templateUrl: './cadastro.html',
+  styleUrl: './cadastro.scss',
 })
 export class Cadastro {
   private readonly auth = inject(Auth);
