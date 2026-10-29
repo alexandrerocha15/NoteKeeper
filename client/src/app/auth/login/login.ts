@@ -32,7 +32,7 @@ export class Login {
       senha: this.senha,
     }).subscribe({
       next: (resposta) => {
-        this.auth.salvarToken(resposta.token);
+        this.auth.salvarToken(resposta.accessToken);
         this.carregando.set(false);
         this.router.navigateByUrl('/notas');
       },

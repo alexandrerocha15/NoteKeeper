@@ -14,7 +14,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
+  usuarioId: string;
+  nome: string;
+  email: string;
+  accessToken: string;
+  dataExpiracaoEmUtc: string;
 }
 
 @Injectable({
