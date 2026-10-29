@@ -13,6 +13,7 @@ export class Listagem implements OnInit {
 
   notas = signal<Nota[]>([]);
   categorias = signal<Categoria[]>([]);
+  categoriasFiltro = signal<string[]>([]);
 
   carregando = signal(true);
   erro = signal('');
@@ -28,6 +29,7 @@ export class Listagem implements OnInit {
   excluindoId = signal<string | null>(null);
   alterandoStatusId = signal<string | null>(null);
   erroCadastro = signal('');
+  totalNotas = signal(0);
 
   ngOnInit(): void {
     this.carregarNotas();
@@ -40,7 +42,17 @@ export class Listagem implements OnInit {
 
     this.notasService.listar().subscribe({
       next: (notas) => {
-        this.notas.set(notas);
+        const filtros = this.categoriasFiltro();
+        this.totalNotas.set(notas.length);
+
+        const notasFiltradas =
+          filtros.length === 0
+            ? notas
+            : notas.filter((nota) =>
+                (nota.categorias ?? []).some((categoria) => filtros.includes(categoria.id)),
+              );
+
+        this.notas.set(notasFiltradas);
         this.carregando.set(false);
       },
       error: () => {
@@ -61,9 +73,7 @@ export class Listagem implements OnInit {
 
   alternarCategoria(id: string, selecionada: boolean): void {
     this.categoriasSelecionadas.update((ids) =>
-      selecionada
-        ? [...new Set([...ids, id])]
-        : ids.filter((item) => item !== id)
+      selecionada ? [...new Set([...ids, id])] : ids.filter((item) => item !== id),
     );
   }
 
@@ -76,9 +86,7 @@ export class Listagem implements OnInit {
     this.notaEmEdicao.set(nota);
     this.titulo.set(nota.titulo);
     this.descricao.set(nota.descricao ?? '');
-    this.categoriasSelecionadas.set(
-      (nota.categorias ?? []).map((categoria) => categoria.id)
-    );
+    this.categoriasSelecionadas.set((nota.categorias ?? []).map((categoria) => categoria.id));
     this.erroCadastro.set('');
     this.exibirFormulario.set(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -117,13 +125,9 @@ export class Listagem implements OnInit {
           titulo,
           descricao,
           nota.status,
-          this.categoriasSelecionadas()
+          this.categoriasSelecionadas(),
         )
-      : this.notasService.cadastrar(
-          titulo,
-          descricao,
-          this.categoriasSelecionadas()
-        );
+      : this.notasService.cadastrar(titulo, descricao, this.categoriasSelecionadas());
 
     requisicao.subscribe({
       next: () => {
@@ -132,37 +136,36 @@ export class Listagem implements OnInit {
         this.carregarNotas();
       },
       error: () => {
-        this.erroCadastro.set(
-          'Não foi possível salvar a nota. Verifique se o título já existe.'
-        );
+        this.erroCadastro.set('Não foi possível salvar a nota. Verifique se o título já existe.');
         this.salvando.set(false);
       },
     });
   }
 
   alternarStatus(nota: Nota): void {
-    const novoStatus =
-      nota.status === 'Ativa' ? 'Arquivada' : 'Ativa';
+    const novoStatus = nota.status === 'Ativa' ? 'Arquivada' : 'Ativa';
 
     this.alterandoStatusId.set(nota.id);
     this.erro.set('');
 
-    this.notasService.editar(
-      nota.id,
-      nota.titulo,
-      nota.descricao ?? '',
-      novoStatus,
-      (nota.categorias ?? []).map((categoria) => categoria.id)
-    ).subscribe({
-      next: () => {
-        this.alterandoStatusId.set(null);
-        this.carregarNotas();
-      },
-      error: () => {
-        this.alterandoStatusId.set(null);
-        this.erro.set('Não foi possível alterar o status da nota.');
-      },
-    });
+    this.notasService
+      .editar(
+        nota.id,
+        nota.titulo,
+        nota.descricao ?? '',
+        novoStatus,
+        (nota.categorias ?? []).map((categoria) => categoria.id),
+      )
+      .subscribe({
+        next: () => {
+          this.alterandoStatusId.set(null);
+          this.carregarNotas();
+        },
+        error: () => {
+          this.alterandoStatusId.set(null);
+          this.erro.set('Não foi possível alterar o status da nota.');
+        },
+      });
   }
 
   excluirNota(nota: Nota): void {
@@ -183,5 +186,18 @@ export class Listagem implements OnInit {
         this.erro.set('Não foi possível excluir a nota.');
       },
     });
+  }
+
+  alternarFiltroCategoria(id: string, selecionada: boolean): void {
+    this.categoriasFiltro.update((ids) =>
+      selecionada ? [...new Set([...ids, id])] : ids.filter((item) => item !== id),
+    );
+
+    this.carregarNotas();
+  }
+
+  limparFiltros(): void {
+    this.categoriasFiltro.set([]);
+    this.carregarNotas();
   }
 }

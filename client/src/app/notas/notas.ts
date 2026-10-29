@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Auth } from '../auth/auth';
@@ -23,14 +23,23 @@ export class Notas {
 
   private readonly apiUrl = 'http://localhost:5146/notas';
 
-  listar(): Observable<Nota[]> {
+  listar(categoriaIds: string[] = []): Observable<Nota[]> {
     const token = this.auth.obterToken();
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token ?? ''}`,
     });
 
-    return this.http.get<Nota[]>(this.apiUrl, { headers });
+    let params = new HttpParams();
+
+    for (const id of categoriaIds) {
+      params = params.append('categoriaIds', id);
+    }
+
+    return this.http.get<Nota[]>(this.apiUrl, {
+      headers,
+      params,
+    });
   }
 
   cadastrar(titulo: string, descricao: string, categoriaIds: string[]): Observable<Nota> {
