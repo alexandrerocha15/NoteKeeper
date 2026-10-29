@@ -32,4 +32,22 @@ export class Notas {
 
     return this.http.get<Nota[]>(this.apiUrl, { headers });
   }
+
+  cadastrar(titulo: string, descricao: string, categoriaIds: string[]): Observable<Nota> {
+    const token = this.auth.obterToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token ?? ''}`,
+    });
+
+    return this.http.post<Nota>(
+      this.apiUrl,
+      {
+        titulo,
+        descricao,
+        categoriaIds,
+      },
+      { headers },
+    );
+  }
 }
