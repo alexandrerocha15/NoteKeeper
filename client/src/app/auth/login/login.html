@@ -1,0 +1,99 @@
+
+<main class="container-fluid p-0">
+  <div class="row g-0 min-vh-100">
+
+    <section class="col-lg-6 painel-apresentacao d-flex flex-column justify-content-between p-5">
+      <div class="marca d-flex align-items-center gap-3">
+        <span class="marca-icone">N</span>
+        <span class="fs-4 fw-bold">NoteKeeper</span>
+      </div>
+
+      <div class="apresentacao">
+        <span class="etiqueta">SUAS IDEIAS EM UM SÓ LUGAR</span>
+
+        <h1 class="fw-bold mt-3 mb-4">
+          Organize suas ideias.<br>
+          Simplifique sua rotina.
+        </h1>
+
+        <p>
+          Crie notas, organize por categorias e mantenha
+          suas informações sempre ao seu alcance.
+        </p>
+
+        <div class="nota-ilustrativa mt-5">
+          <span class="nota-categoria">Pessoal</span>
+          <h3 class="fs-5 mt-3">Minhas anotações</h3>
+          <div class="linha"></div>
+          <div class="linha curta"></div>
+          <div class="linha media"></div>
+        </div>
+      </div>
+
+      <small class="rodape">NoteKeeper © 2026</small>
+    </section>
+
+    <section class="col-lg-6 painel-formulario d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="formulario-conteudo w-100">
+        <span class="etiqueta">BEM-VINDO DE VOLTA</span>
+
+        <h2 class="fw-bold mt-3">Acesse sua conta</h2>
+        <p class="text-secondary mb-4">
+          Informe suas credenciais para continuar.
+        </p>
+
+        <form (ngSubmit)="entrar()">
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">E-mail</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              class="form-control form-control-lg"
+              [(ngModel)]="email"
+              placeholder="seu@email.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="senha" class="form-label fw-semibold">Senha</label>
+            <input
+              id="senha"
+              type="password"
+              name="senha"
+              class="form-control form-control-lg"
+              [(ngModel)]="senha"
+              placeholder="Digite sua senha"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          @if (erro()) {
+            <div class="alert alert-danger" role="alert">
+              {{ erro() }}
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn botao-entrar w-100 py-3 fw-bold"
+            [disabled]="carregando()"
+          >
+            {{ carregando() ? 'Entrando...' : 'Entrar na conta' }}
+          </button>
+        </form>
+
+        <p class="text-center text-secondary mt-4">
+          Ainda não possui uma conta?
+          <a routerLink="/cadastro" class="link-cadastro fw-bold">
+            Criar conta
+          </a>
+        </p>
+      </div>
+    </section>
+
+  </div>
+</main>
