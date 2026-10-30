@@ -92,7 +92,6 @@ var app = builder.Build();
 app.MapOpenApi().AllowAnonymous();
 app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "NoteKeeper API v1"));
 
-if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<NoteKeeperDbContext>();
