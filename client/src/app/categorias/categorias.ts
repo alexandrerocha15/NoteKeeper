@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Auth } from '../auth/auth';
+import { API_URL } from '../api.config';
 
 export interface Categoria {
   id: string;
@@ -14,7 +15,7 @@ export interface Categoria {
 export class Categorias {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(Auth);
-  private readonly apiUrl = 'http://localhost:5146/categorias';
+  private readonly apiUrl = `${API_URL}/categorias`;
 
   listar(): Observable<Categoria[]> {
     const token = this.auth.obterToken();

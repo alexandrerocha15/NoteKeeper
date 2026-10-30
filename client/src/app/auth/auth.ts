@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_URL } from '../api.config';
 
 export interface CadastroRequest {
   nome: string;
@@ -26,7 +27,7 @@ export interface LoginResponse {
 })
 export class Auth {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5146/auth';
+  private readonly apiUrl = `${API_URL}/auth`;
 
   cadastrar(dados: CadastroRequest): Observable<unknown> {
     return this.http.post(`${this.apiUrl}/cadastro`, dados);

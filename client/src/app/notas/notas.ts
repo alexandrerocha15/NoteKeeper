@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Auth } from '../auth/auth';
+import { API_URL } from '../api.config';
 
 export interface Nota {
   id: string;
@@ -21,7 +22,7 @@ export class Notas {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(Auth);
 
-  private readonly apiUrl = 'http://localhost:5146/notas';
+  private readonly apiUrl = `${API_URL}/notas`;
 
   listar(categoriaIds: string[] = []): Observable<Nota[]> {
     const token = this.auth.obterToken();
